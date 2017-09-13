@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/src/java/sg/edu/nus/iss/phoenix/radioprogram/service/ProgramService.java</file>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/web/WEB-INF/web.xml</file>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/src/java/sg/edu/nus/iss/phoenix/radioprogram/restful/ProgramRESTService.java</file>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/web/pages/home.jsp</file>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/src/java/sg/edu/nus/iss/phoenix/authenticate/dao/impl/UserDaoImpl.java</file>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/src/java/sg/edu/nus/iss/phoenix/authenticate/RESTful/ApplicationConfig.java</file>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/web/pages/login.jsp</file>
+            <file>file:/Users/treza/NetBeansProjects/PRMS/nbproject/build-impl.xml</file>
+        </group>
+    </open-files>
+</project-private>
