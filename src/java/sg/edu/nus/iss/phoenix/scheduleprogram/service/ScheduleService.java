@@ -7,8 +7,11 @@ package sg.edu.nus.iss.phoenix.scheduleprogram.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import javax.ejb.Stateless;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
+import sg.edu.nus.iss.phoenix.core.exceptions.DuplicateProgramSlot;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduleprogram.dao.ScheduleDao;
 import sg.edu.nus.iss.phoenix.scheduleprogram.entity.ProgramSlot;
@@ -29,15 +32,8 @@ public class ScheduleService {
         rpdao = factory.getSchedeuleDAO();
     }
 
-    public ArrayList<ProgramSlot> retrieveAll() {
-        ArrayList<ProgramSlot> list = new ArrayList<ProgramSlot>();
-        try {
-                list = (ArrayList<ProgramSlot>) rpdao.retrieveAll();
-        } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-        }
-        return list;
+    public ArrayList<ProgramSlot> retrieveAll() throws Exception {
+        return (ArrayList<ProgramSlot>) rpdao.retrieveAll();
     }
 
     public ProgramSlot retrieveBy(int id) {
@@ -56,39 +52,33 @@ public class ScheduleService {
         return ps;
     }
 
-    public void create(ProgramSlot rp) {
-        try {
-            rpdao.create(rp);
-            
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void create(ProgramSlot rp)throws Exception {
+        if(rpdao.isProgramSlotAssigned(rp.getDateOfProgram(), getProgramEndTime(rp), 0))
+            throw new DuplicateProgramSlot("Program slot for " + rp.getProgramName() + " is already taken.");
+        rpdao.create(rp);
     }
 
-    public void update(ProgramSlot rp) {
-
-        try {
-                rpdao.create(rp);
-        } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-        }
-
+    public void update(ProgramSlot rp)throws Exception {
+        if(rpdao.isProgramSlotAssigned(rp.getDateOfProgram(), getProgramEndTime(rp), rp.getId()))
+            throw new DuplicateProgramSlot("Program slot for " + rp.getProgramName() + " is already taken.");
+        rpdao.create(rp);
     }
 
-    public void delete(Long id) {
+    public void delete(int id)throws Exception {
+        ProgramSlot rp = new ProgramSlot();
+        rp.setId(id);
+        rpdao.delete(rp);
+    }
+    
+    private Date getProgramEndTime(ProgramSlot rp){
+        Calendar calendarDuration = Calendar.getInstance();
+        calendarDuration.setTime(rp.getDuration());
 
-        try {
-            ProgramSlot rp = new ProgramSlot();
-            rp.setId(id);
-            rpdao.delete(rp);
-        } catch (NotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        Calendar calendarEndDateTime = Calendar.getInstance();
+        calendarEndDateTime.setTime(new Date(rp.getDateOfProgram().getTime()));
+        calendarEndDateTime.add(Calendar.HOUR_OF_DAY, calendarDuration.get(Calendar.HOUR_OF_DAY));
+        calendarEndDateTime.add(Calendar.MINUTE, calendarDuration.get(Calendar.MINUTE));
+        
+        return calendarEndDateTime.getTime();
     }
 }

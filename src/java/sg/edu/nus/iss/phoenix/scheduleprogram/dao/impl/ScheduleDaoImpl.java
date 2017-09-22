@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
@@ -57,7 +58,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     private ProgramSlot resultSetToObject(ResultSet rs)throws SQLException{
         ProgramSlot programSlot = new ProgramSlot();
         
-        programSlot.setId(new Long(rs.getInt("id")));
+        programSlot.setId(rs.getInt("id"));
         programSlot.setProgramName(rs.getString("program-name"));
         programSlot.setDateOfProgram(rs.getTimestamp("dateOfProgram"));
         programSlot.setDuration(rs.getTimestamp("duration"));
@@ -88,7 +89,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
         String sql = "";
 	PreparedStatement stmt = null;
         try {
-                sql = "INSERT INTO program-slot (duration, dateOfProgram, programName) VALUES (?, ?, ?, ?) ";
+                sql = "INSERT INTO `program-slot` (duration, dateOfProgram, programName) VALUES (?, ?, ?, ?) ";
                 stmt = this.connection.prepareStatement(sql);
 
                 stmt.setTimestamp(1, new Timestamp(valueObject.getDuration().getTime()));
@@ -146,7 +147,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
 
         try {
                 stmt = this.connection.prepareStatement(sql);
-                    stmt.setInt(1, valueObject.getId().intValue());
+                    stmt.setInt(1, valueObject.getId());
 
                 int rowcount = databaseUpdate(stmt);
                 if (rowcount == 0) {
@@ -212,5 +213,29 @@ public class ScheduleDaoImpl implements ScheduleDao {
         } catch (SQLException e) {
         }
         return conn;
+    }
+
+    @Override
+    public boolean isProgramSlotAssigned(Date startDateTime, Date endDateTime, int id) throws SQLException {
+        StringBuilder sqlQuery = new StringBuilder("select * from `program-slot`");
+        sqlQuery.append(" where (? >= dateOfProgram and ? <= (dateOfProgram + duration))");
+        sqlQuery.append(" or (? >= dateOfProgram and ? <= (dateOfProgram + duration))");
+        
+        if(id != 0)
+            sqlQuery.append(" and id != ").append(id);
+        
+        PreparedStatement prepareStatement;
+        try {
+            prepareStatement = connection.prepareStatement(sqlQuery.toString());
+            prepareStatement.setDate(1, new java.sql.Date(startDateTime.getTime()));
+            prepareStatement.setDate(2, new java.sql.Date(startDateTime.getTime()));
+            prepareStatement.setDate(3, new java.sql.Date(endDateTime.getTime()));
+            prepareStatement.setDate(4, new java.sql.Date(endDateTime.getTime()));
+            
+            ResultSet rs = prepareStatement.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 }

@@ -22,7 +22,7 @@ public class ProgramSlot implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 
     public Date getDateOfProgram() {
         return dateOfProgram;
@@ -52,11 +52,11 @@ public class ProgramSlot implements Serializable {
     private String programName;
     private Date duration;
     
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

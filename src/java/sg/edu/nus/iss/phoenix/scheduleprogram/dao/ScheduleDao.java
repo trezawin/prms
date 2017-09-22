@@ -7,6 +7,7 @@ package sg.edu.nus.iss.phoenix.scheduleprogram.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
 import sg.edu.nus.iss.phoenix.scheduleprogram.entity.ProgramSlot;
@@ -111,4 +112,5 @@ public interface ScheduleDao {
 	 */
 	public abstract void delete(Connection conn) throws SQLException;
 
+        public abstract boolean isProgramSlotAssigned(Date startDateTime, Date endDateTime, int id)throws SQLException;
 }

@@ -5,6 +5,7 @@
  */
 package sg.edu.nus.iss.phoenix.scheduleprogram.restful.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
@@ -17,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
+import sg.edu.nus.iss.phoenix.core.exceptions.DuplicateProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduleprogram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduleprogram.service.ScheduleService;
 
@@ -44,8 +46,13 @@ public class ScheduleRESTService {
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProgramSlot> retrieveAll() {
-        return service.retrieveAll();
+    public List<ProgramSlot> retrieveAll() throws Exception {
+        try {
+            return service.retrieveAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<ProgramSlot>();
+        }
     }
     
     /**
@@ -55,8 +62,17 @@ public class ScheduleRESTService {
     @POST
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void update(ProgramSlot ps) {
-        service.update(ps);
+    @Produces(MediaType.TEXT_PLAIN)
+    public String update(ProgramSlot ps) {
+        try {
+            service.update(ps);
+            return "true";
+        } catch (DuplicateProgramSlot e){
+            return "duplicate";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "false";
+        }
     }
     
     /**
@@ -66,8 +82,17 @@ public class ScheduleRESTService {
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createRadioProgram(ProgramSlot ps) {
-        service.create(ps);
+    @Produces(MediaType.TEXT_PLAIN)
+    public String createRadioProgram(ProgramSlot ps) {
+        try {
+            service.create(ps);
+            return "true";
+        } catch (DuplicateProgramSlot e){
+            return "duplicate";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "false";
+        }
     }
         
     /**
@@ -75,9 +100,16 @@ public class ScheduleRESTService {
      * @param name name of the resource
      */
     @DELETE
-    @Path("/delete/{psid}")
+    @Path("/delete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void deleteRadioProgram(@PathParam("psid") Long id) {
-        service.delete(id);
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteRadioProgram(@PathParam("id") int id) {
+        try {
+            service.delete(id);
+            return "true";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "false";
+        }
     }
 }
