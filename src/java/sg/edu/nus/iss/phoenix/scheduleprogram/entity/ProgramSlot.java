@@ -6,6 +6,7 @@
 package sg.edu.nus.iss.phoenix.scheduleprogram.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +24,34 @@ public class ProgramSlot implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    public Date getDateOfProgram() {
+        return dateOfProgram;
+    }
+
+    public void setDateOfProgram(Date dateOfProgram) {
+        this.dateOfProgram = dateOfProgram;
+    }
+
+    public String getProgramName() {
+        return programName;
+    }
+
+    public void setProgramName(String programName) {
+        this.programName = programName;
+    }
+
+    public Date getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Date duration) {
+        this.duration = duration;
+    }
+
+    private Date dateOfProgram;
+    private String programName;
+    private Date duration;
+    
     public Long getId() {
         return id;
     }
