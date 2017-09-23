@@ -21,14 +21,30 @@ public class AnnualSchedule implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
+    private String assignedBy;
 
-    public Long getId() {
+    public AnnualSchedule(){};
+    
+    public AnnualSchedule(Integer id, String assignedBy){
+        this.id = id;
+        this.assignedBy = assignedBy;
+    }
+    
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public String getAssignedBy(){
+        return this.assignedBy;
+    }
+    
+    public void setAssignedBy(String assignedBy){
+        this.assignedBy = assignedBy;
     }
 
     @Override

@@ -13,8 +13,10 @@ import javax.ejb.Stateless;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 import sg.edu.nus.iss.phoenix.core.exceptions.DuplicateProgramSlot;
 import sg.edu.nus.iss.phoenix.core.exceptions.NotFoundException;
+import sg.edu.nus.iss.phoenix.scheduleprogram.dao.AnnualScheduleDAO;
 import sg.edu.nus.iss.phoenix.scheduleprogram.dao.ScheduleDao;
 import sg.edu.nus.iss.phoenix.scheduleprogram.dao.WeeklyDAO;
+import sg.edu.nus.iss.phoenix.scheduleprogram.entity.AnnualSchedule;
 import sg.edu.nus.iss.phoenix.scheduleprogram.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduleprogram.entity.WeeklySchedule;
 
@@ -28,12 +30,14 @@ public class ScheduleService {
     DAOFactoryImpl factory;
     ScheduleDao rpdao;
     WeeklyDAO weeklyDao;
+    AnnualScheduleDAO annualScheduleDao;
 
     public ScheduleService() {
         super();
         factory = new DAOFactoryImpl();
         rpdao = factory.getSchedeuleDAO();
         weeklyDao = factory.getWeeklyDAO();
+        annualScheduleDao = factory.getAnnualScheduleDAO();
     }
 
     public ArrayList<ProgramSlot> retrieveAll() throws Exception {
@@ -69,15 +73,23 @@ public class ScheduleService {
         startDateCalendar.set(Calendar.MINUTE, 0);
         startDateCalendar.set(Calendar.SECOND, 0);
         startDateCalendar.set(Calendar.MILLISECOND, 0);
-        if(!weeklyDao.isExisting(rp.getDateOfProgram())){
+        
+        Date startDateOfWeek = new Date(startDateCalendar.getTime().getTime());
+        if(!weeklyDao.isExisting(startDateCalendar.getTime())){
             WeeklySchedule weeklySchedule = new WeeklySchedule();
-            weeklySchedule.setStartDate(new Date(startDateCalendar.getTime().getTime()));
+            weeklySchedule.setStartDate(startDateOfWeek);
             
             startDateCalendar.add(Calendar.DAY_OF_MONTH, (7 - dayOfWeek) + 1);
             startDateCalendar.add(Calendar.SECOND, -1);
             weeklySchedule.setEndDate(startDateCalendar.getTime());
             weeklySchedule.setAssignedBy("");
             weeklyDao.create(weeklySchedule);
+            
+            startDateCalendar.setTime(startDateOfWeek);
+            if(!annualScheduleDao.isExisting(startDateCalendar.get(Calendar.YEAR))){
+                AnnualSchedule annualSchedule = new AnnualSchedule(startDateCalendar.get(Calendar.YEAR), "");
+                annualScheduleDao.create(annualSchedule);
+            }
         }
     }
 
