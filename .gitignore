@@ -1,4 +1,4 @@
-nbproject
-lib
-dist
-build
+nbproject/*
+lib/*
+dist/*
+build/*
