@@ -1,4 +1,2 @@
-/nbproject/
-/build/
-/lib/
-/dist/
+*.class
+nbproject/
