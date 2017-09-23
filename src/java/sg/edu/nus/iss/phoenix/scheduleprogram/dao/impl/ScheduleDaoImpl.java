@@ -89,7 +89,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
         String sql = "";
 	PreparedStatement stmt = null;
         try {
-                sql = "INSERT INTO `program-slot` (duration, dateOfProgram, programName) VALUES (?, ?, ?, ?) ";
+                sql = "INSERT INTO `program-slot` (duration, dateOfProgram, `program-name`) VALUES (?, ?, ?) ";
                 stmt = this.connection.prepareStatement(sql);
 
                 stmt.setTimestamp(1, new Timestamp(valueObject.getDuration().getTime()));
@@ -112,7 +112,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public void update(ProgramSlot valueObject) throws NotFoundException, SQLException {
 
-        String sql = "UPDATE program-slot SET program-name = ?, duration = ?, dateOfProgram = ? "
+        String sql = "UPDATE `program-slot` SET `program-name` = ?, duration = ?, dateOfProgram = ? "
                 + "WHERE (id = ? ) ";
         PreparedStatement stmt = null;
 
@@ -121,6 +121,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 stmt.setString(1, valueObject.getProgramName());
                 stmt.setTimestamp(2, new Timestamp(valueObject.getDuration().getTime()));
                 stmt.setTimestamp(3, new Timestamp(valueObject.getDateOfProgram().getTime()));
+                stmt.setInt(4, valueObject.getId());
 
                 int rowcount = databaseUpdate(stmt);
                 if (rowcount == 0) {
@@ -142,7 +143,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public void delete(ProgramSlot valueObject) throws NotFoundException, SQLException {
         
-        String sql = "DELETE FROM program-slot WHERE (id = ? ) ";
+        String sql = "DELETE FROM `program-slot` WHERE (id = ? ) ";
         PreparedStatement stmt = null;
 
         try {
@@ -169,7 +170,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public void delete(Connection conn) throws SQLException {
         
-        String sql = "DELETE FROM program-slot";
+        String sql = "DELETE FROM `program-slot`";
         PreparedStatement stmt = null;
 
         try {
@@ -218,12 +219,12 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public boolean isProgramSlotAssigned(Date startDateTime, Date endDateTime, int id) throws SQLException {
         StringBuilder sqlQuery = new StringBuilder("select * from `program-slot`");
-        sqlQuery.append(" where (? >= dateOfProgram and ? <= (dateOfProgram + duration))");
-        sqlQuery.append(" or (? >= dateOfProgram and ? <= (dateOfProgram + duration))");
+        sqlQuery.append(" where ((? >= dateOfProgram and ? <= (dateOfProgram + duration))");
+        sqlQuery.append(" or (? >= dateOfProgram and ? <= (dateOfProgram + duration)))");
         
         if(id != 0)
             sqlQuery.append(" and id != ").append(id);
-        
+        System.out.println(sqlQuery.toString());
         PreparedStatement prepareStatement;
         try {
             prepareStatement = connection.prepareStatement(sqlQuery.toString());

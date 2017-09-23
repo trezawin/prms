@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 /**
  *
@@ -51,6 +52,36 @@ public class ProgramSlot implements Serializable {
     private Date dateOfProgram;
     private String programName;
     private Date duration;
+    @Transient
+    private long dateOfProgramTimestamp;
+    @Transient
+    private long durationTimestamp;
+    @Transient
+    private String assignedBy;
+
+    public String getAssignedBy() {
+        return assignedBy;
+    }
+
+    public void setAssignedBy(String assignedBy) {
+        this.assignedBy = assignedBy;
+    }
+
+    public long getDateOfProgramTimestamp() {
+        return dateOfProgramTimestamp;
+    }
+
+    public void setDateOfProgramTimestamp(long dateOfProgramTimestamp) {
+        this.dateOfProgramTimestamp = dateOfProgramTimestamp;
+    }
+
+    public long getDurationTimestamp() {
+        return durationTimestamp;
+    }
+
+    public void setDurationTimestamp(long durationTimestamp) {
+        this.durationTimestamp = durationTimestamp;
+    }
     
     public int getId() {
         return id;

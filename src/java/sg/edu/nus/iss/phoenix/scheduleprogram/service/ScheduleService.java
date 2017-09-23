@@ -82,12 +82,12 @@ public class ScheduleService {
             startDateCalendar.add(Calendar.DAY_OF_MONTH, (7 - dayOfWeek) + 1);
             startDateCalendar.add(Calendar.SECOND, -1);
             weeklySchedule.setEndDate(startDateCalendar.getTime());
-            weeklySchedule.setAssignedBy("");
+            weeklySchedule.setAssignedBy(rp.getAssignedBy());
             weeklyDao.create(weeklySchedule);
             
             startDateCalendar.setTime(startDateOfWeek);
             if(!annualScheduleDao.isExisting(startDateCalendar.get(Calendar.YEAR))){
-                AnnualSchedule annualSchedule = new AnnualSchedule(startDateCalendar.get(Calendar.YEAR), "");
+                AnnualSchedule annualSchedule = new AnnualSchedule(startDateCalendar.get(Calendar.YEAR), rp.getAssignedBy());
                 annualScheduleDao.create(annualSchedule);
             }
         }
@@ -96,7 +96,7 @@ public class ScheduleService {
     public void update(ProgramSlot rp)throws Exception {
         if(rpdao.isProgramSlotAssigned(rp.getDateOfProgram(), getProgramEndTime(rp), rp.getId()))
             throw new DuplicateProgramSlot("Program slot for " + rp.getProgramName() + " is already taken.");
-        rpdao.create(rp);
+        rpdao.update(rp);
     }
 
     public void delete(int id)throws Exception {

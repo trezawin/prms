@@ -6,6 +6,7 @@
 package sg.edu.nus.iss.phoenix.scheduleprogram.restful.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
@@ -65,6 +66,8 @@ public class ScheduleRESTService {
     @Produces(MediaType.TEXT_PLAIN)
     public String update(ProgramSlot ps) {
         try {
+            ps.setDateOfProgram(new Date(ps.getDateOfProgramTimestamp()));
+            ps.setDuration(new Date(ps.getDurationTimestamp()));
             service.update(ps);
             return "true";
         } catch (DuplicateProgramSlot e){
@@ -85,6 +88,8 @@ public class ScheduleRESTService {
     @Produces(MediaType.TEXT_PLAIN)
     public String createRadioProgram(ProgramSlot ps) {
         try {
+            ps.setDateOfProgram(new Date(ps.getDateOfProgramTimestamp()));
+            ps.setDuration(new Date(ps.getDurationTimestamp()));
             service.create(ps);
             return "true";
         } catch (DuplicateProgramSlot e){

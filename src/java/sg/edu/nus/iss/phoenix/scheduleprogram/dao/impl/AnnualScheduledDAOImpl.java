@@ -51,7 +51,7 @@ public class AnnualScheduledDAOImpl implements AnnualScheduleDAO{
 
     @Override
     public void create(AnnualSchedule annualSchedule) throws SQLException {
-        String sqlQuery = "insert into `annual-schedule` (year, assignedBy) values ( ?, ?)";
+        String sqlQuery = "insert into `annual-schedule` (year, assingedBy) values ( ?, ?)";
         PreparedStatement preparedStatement = connection.prepareCall(sqlQuery);
         preparedStatement.setInt(1, annualSchedule.getId());
         preparedStatement.setString(2, annualSchedule.getAssignedBy());
