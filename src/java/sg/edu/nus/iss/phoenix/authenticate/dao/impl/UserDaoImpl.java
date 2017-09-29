@@ -155,7 +155,15 @@ public class UserDaoImpl implements UserDao {
 			stmt = this.connection.prepareStatement(sql);
 			stmt.setString(1, valueObject.getPassword());
 			stmt.setString(2, valueObject.getName());
-			stmt.setString(3, valueObject.getRoles().get(0).getRole());
+                        StringBuffer roles = new StringBuffer();
+                        for(Role role :  valueObject.getRoles()){
+                            roles.append(":");
+                            roles.append(role.getRole());
+                        }
+                        String roleStr=null;
+                        if(roles.length()>1)
+                            roleStr = roles.substring(1).toString();
+			stmt.setString(3, roleStr);
 
 			stmt.setString(4, valueObject.getId());
 
