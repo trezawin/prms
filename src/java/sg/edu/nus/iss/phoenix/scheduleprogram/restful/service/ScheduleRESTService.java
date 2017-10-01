@@ -106,7 +106,6 @@ public class ScheduleRESTService {
      */
     @DELETE
     @Path("/delete/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public String deleteRadioProgram(@PathParam("id") int id) {
         try {

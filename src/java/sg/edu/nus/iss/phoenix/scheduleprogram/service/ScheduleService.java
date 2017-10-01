@@ -111,7 +111,6 @@ public class ScheduleService {
 
         Calendar calendarEndDateTime = Calendar.getInstance();
         calendarEndDateTime.setTime(new Date(rp.getDateOfProgram().getTime()));
-        calendarEndDateTime.add(Calendar.HOUR_OF_DAY, calendarDuration.get(Calendar.HOUR_OF_DAY));
         calendarEndDateTime.add(Calendar.MINUTE, calendarDuration.get(Calendar.MINUTE));
         
         return calendarEndDateTime.getTime();

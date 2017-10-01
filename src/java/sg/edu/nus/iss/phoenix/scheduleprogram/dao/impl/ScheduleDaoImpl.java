@@ -70,9 +70,9 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public List<ProgramSlot> retrieveAll() throws SQLException {
         String sql = "SELECT * FROM `program-slot`";
-        String userSql = "select * from user";
+        
         PreparedStatement stmt = null;
-        PreparedStatement userStatement = this.connection.prepareCall(userSql);
+        
         List<ProgramSlot> prgSlotList = new ArrayList<>();
         try {
                 stmt = this.connection.prepareStatement(sql);
@@ -80,14 +80,20 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 while (rs.next()) {
                     ProgramSlot programSlot = this.resultSetToObject(rs);
                     if(programSlot.getPresenterId() != null && !programSlot.getPresenterId().equals("")){
+                        String userSql = "select * from user where id = ?";
+                        PreparedStatement userStatement = this.connection.prepareCall(userSql);
+                        userStatement.setString(1, programSlot.getPresenterId());
                         ResultSet userRS = userStatement.executeQuery();
                         userRS.next();
-                        programSlot.setPresneterName(userRS.getString(1));
+                        programSlot.setPresenterName(userRS.getString(3));
                     }
                     if(programSlot.getProducerId() != null && !programSlot.getProducerId().equals("")){
+                        String userSql = "select * from user where id = ?";
+                        PreparedStatement userStatement = this.connection.prepareCall(userSql);
+                        userStatement.setString(1, programSlot.getProducerId());
                         ResultSet producerRS = userStatement.executeQuery();
                         producerRS.next();
-                        programSlot.setProducerName(producerRS.getString(1));
+                        programSlot.setProducerName(producerRS.getString(3));
                     }
                     prgSlotList.add(programSlot);
                 }
@@ -103,14 +109,14 @@ public class ScheduleDaoImpl implements ScheduleDao {
         String sql = "";
 	PreparedStatement stmt = null;
         try {
-                sql = "INSERT INTO `program-slot` (duration, dateOfProgram, `program-name`, producerId, persenterId) VALUES (?, ?, ?, ?, ?) ";
+                sql = "INSERT INTO `program-slot` (duration, dateOfProgram, `program-name`, producerId, presenterId) VALUES (?, ?, ?, ?, ?) ";
                 stmt = this.connection.prepareStatement(sql);
 
                 stmt.setTimestamp(1, new Timestamp(valueObject.getDuration().getTime()));
                 stmt.setTimestamp(2, new Timestamp(valueObject.getDateOfProgram().getTime()));
                 stmt.setString(3, valueObject.getProgramName());
                 stmt.setString(4, valueObject.getProducerId());
-                stmt.setString(5, valueObject.getPresneterName());
+                stmt.setString(5, valueObject.getPresenterId());
                 
                 int rowcount = databaseUpdate(stmt);
                 
@@ -237,8 +243,8 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public boolean isProgramSlotAssigned(Date startDateTime, Date endDateTime, int id) throws SQLException {
         StringBuilder sqlQuery = new StringBuilder("select * from `program-slot`");
-        sqlQuery.append(" where ((? >= dateOfProgram and ? <= (dateOfProgram + duration))");
-        sqlQuery.append(" or (? >= dateOfProgram and ? <= (dateOfProgram + duration)))");
+        sqlQuery.append(" where (? between dateOfProgram and (dateOfProgram + duration))");
+        sqlQuery.append(" or (? between dateOfProgram and (dateOfProgram + duration))");
         
         if(id != 0)
             sqlQuery.append(" and id != ").append(id);
@@ -247,9 +253,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
         try {
             prepareStatement = connection.prepareStatement(sqlQuery.toString());
             prepareStatement.setDate(1, new java.sql.Date(startDateTime.getTime()));
-            prepareStatement.setDate(2, new java.sql.Date(startDateTime.getTime()));
-            prepareStatement.setDate(3, new java.sql.Date(endDateTime.getTime()));
-            prepareStatement.setDate(4, new java.sql.Date(endDateTime.getTime()));
+            prepareStatement.setDate(2, new java.sql.Date(endDateTime.getTime()));
             
             ResultSet rs = prepareStatement.executeQuery();
             return rs.next();

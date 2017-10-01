@@ -61,7 +61,7 @@ public class ProgramSlot implements Serializable {
     private String producerId;
     private String producerName;
     private String presenterId;
-    private String presneterName;
+    private String presenterName;
 
     public String getProducerId() {
         return producerId;
@@ -87,12 +87,12 @@ public class ProgramSlot implements Serializable {
         this.presenterId = presenterId;
     }
 
-    public String getPresneterName() {
-        return presneterName;
+    public String getPresenterName() {
+        return presenterName;
     }
 
-    public void setPresneterName(String presneterName) {
-        this.presneterName = presneterName;
+    public void setPresenterName(String presenterName) {
+        this.presenterName = presenterName;
     }
 
     
