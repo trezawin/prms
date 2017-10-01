@@ -58,7 +58,45 @@ public class ProgramSlot implements Serializable {
     private long durationTimestamp;
     @Transient
     private String assignedBy;
+    private String producerId;
+    private String producerName;
+    private String presenterId;
+    private String presneterName;
 
+    public String getProducerId() {
+        return producerId;
+    }
+
+    public void setProducerId(String producerId) {
+        this.producerId = producerId;
+    }
+
+    public String getProducerName() {
+        return producerName;
+    }
+
+    public void setProducerName(String producerName) {
+        this.producerName = producerName;
+    }
+
+    public String getPresenterId() {
+        return presenterId;
+    }
+
+    public void setPresenterId(String presenterId) {
+        this.presenterId = presenterId;
+    }
+
+    public String getPresneterName() {
+        return presneterName;
+    }
+
+    public void setPresneterName(String presneterName) {
+        this.presneterName = presneterName;
+    }
+
+    
+    
     public String getAssignedBy() {
         return assignedBy;
     }

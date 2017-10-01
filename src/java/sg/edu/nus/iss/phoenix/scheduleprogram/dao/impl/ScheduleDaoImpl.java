@@ -62,20 +62,34 @@ public class ScheduleDaoImpl implements ScheduleDao {
         programSlot.setProgramName(rs.getString("program-name"));
         programSlot.setDateOfProgram(rs.getTimestamp("dateOfProgram"));
         programSlot.setDuration(rs.getTimestamp("duration"));
-        
+        programSlot.setPresenterId(rs.getString("presenterId"));
+        programSlot.setProducerId(rs.getString("producerId"));
         return programSlot;
     }
     
     @Override
     public List<ProgramSlot> retrieveAll() throws SQLException {
-                String sql = "SELECT * FROM `program-slot`";
+        String sql = "SELECT * FROM `program-slot`";
+        String userSql = "select * from user";
         PreparedStatement stmt = null;
+        PreparedStatement userStatement = this.connection.prepareCall(userSql);
         List<ProgramSlot> prgSlotList = new ArrayList<>();
         try {
                 stmt = this.connection.prepareStatement(sql);
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
-                    prgSlotList.add(this.resultSetToObject(rs));
+                    ProgramSlot programSlot = this.resultSetToObject(rs);
+                    if(programSlot.getPresenterId() != null && !programSlot.getPresenterId().equals("")){
+                        ResultSet userRS = userStatement.executeQuery();
+                        userRS.next();
+                        programSlot.setPresneterName(userRS.getString(1));
+                    }
+                    if(programSlot.getProducerId() != null && !programSlot.getProducerId().equals("")){
+                        ResultSet producerRS = userStatement.executeQuery();
+                        producerRS.next();
+                        programSlot.setProducerName(producerRS.getString(1));
+                    }
+                    prgSlotList.add(programSlot);
                 }
             } finally {
                 if (stmt != null)
@@ -89,12 +103,14 @@ public class ScheduleDaoImpl implements ScheduleDao {
         String sql = "";
 	PreparedStatement stmt = null;
         try {
-                sql = "INSERT INTO `program-slot` (duration, dateOfProgram, `program-name`) VALUES (?, ?, ?) ";
+                sql = "INSERT INTO `program-slot` (duration, dateOfProgram, `program-name`, producerId, persenterId) VALUES (?, ?, ?, ?, ?) ";
                 stmt = this.connection.prepareStatement(sql);
 
                 stmt.setTimestamp(1, new Timestamp(valueObject.getDuration().getTime()));
                 stmt.setTimestamp(2, new Timestamp(valueObject.getDateOfProgram().getTime()));
                 stmt.setString(3, valueObject.getProgramName());
+                stmt.setString(4, valueObject.getProducerId());
+                stmt.setString(5, valueObject.getPresneterName());
                 
                 int rowcount = databaseUpdate(stmt);
                 
@@ -112,7 +128,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public void update(ProgramSlot valueObject) throws NotFoundException, SQLException {
 
-        String sql = "UPDATE `program-slot` SET `program-name` = ?, duration = ?, dateOfProgram = ? "
+        String sql = "UPDATE `program-slot` SET `program-name` = ?, duration = ?, dateOfProgram = ?, producerId = ?, presenterId = ? "
                 + "WHERE (id = ? ) ";
         PreparedStatement stmt = null;
 
@@ -121,7 +137,9 @@ public class ScheduleDaoImpl implements ScheduleDao {
                 stmt.setString(1, valueObject.getProgramName());
                 stmt.setTimestamp(2, new Timestamp(valueObject.getDuration().getTime()));
                 stmt.setTimestamp(3, new Timestamp(valueObject.getDateOfProgram().getTime()));
-                stmt.setInt(4, valueObject.getId());
+                stmt.setString(4, valueObject.getProducerId());
+                stmt.setString(5, valueObject.getPresenterId());
+                stmt.setInt(6, valueObject.getId());
 
                 int rowcount = databaseUpdate(stmt);
                 if (rowcount == 0) {
