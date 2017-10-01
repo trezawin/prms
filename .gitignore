@@ -1,2 +1,5 @@
 *.class
 nbproject/
+build/
+dist/
+./nbproject/
