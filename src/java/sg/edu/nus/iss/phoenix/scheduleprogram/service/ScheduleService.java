@@ -61,7 +61,7 @@ public class ScheduleService {
     }
 
     public void create(ProgramSlot rp)throws Exception {
-        if(rpdao.isProgramSlotAssigned(rp.getDateOfProgram(), getProgramEndTime(rp), 0))
+        if(rpdao.isProgramSlotAssigned(rp.getDateOfProgram(), rp.getDuration(), 0))
             throw new DuplicateProgramSlot("Program slot for " + rp.getProgramName() + " is already taken.");
         rpdao.create(rp);
         
@@ -94,7 +94,7 @@ public class ScheduleService {
     }
 
     public void update(ProgramSlot rp)throws Exception {
-        if(rpdao.isProgramSlotAssigned(rp.getDateOfProgram(), getProgramEndTime(rp), rp.getId()))
+        if(rpdao.isProgramSlotAssigned(rp.getDateOfProgram(), rp.getDuration(), rp.getId()))
             throw new DuplicateProgramSlot("Program slot for " + rp.getProgramName() + " is already taken.");
         rpdao.update(rp);
     }
@@ -103,16 +103,5 @@ public class ScheduleService {
         ProgramSlot rp = new ProgramSlot();
         rp.setId(id);
         rpdao.delete(rp);
-    }
-    
-    private Date getProgramEndTime(ProgramSlot rp){
-        Calendar calendarDuration = Calendar.getInstance();
-        calendarDuration.setTime(rp.getDuration());
-
-        Calendar calendarEndDateTime = Calendar.getInstance();
-        calendarEndDateTime.setTime(new Date(rp.getDateOfProgram().getTime()));
-        calendarEndDateTime.add(Calendar.MINUTE, calendarDuration.get(Calendar.MINUTE));
-        
-        return calendarEndDateTime.getTime();
     }
 }

@@ -11,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -38,7 +40,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
     @Override
     public ProgramSlot retrieveBy(int id) throws NotFoundException, SQLException {
         
-        String sql = "SELECT * FROM program-slot WHERE (id = ? ) ";
+        String sql = "SELECT * FROM `program-slot` WHERE (id = ? ) ";
         PreparedStatement stmt = null;
         ProgramSlot prgSlot = new ProgramSlot();
         try {
@@ -241,22 +243,36 @@ public class ScheduleDaoImpl implements ScheduleDao {
     }
 
     @Override
-    public boolean isProgramSlotAssigned(Date startDateTime, Date endDateTime, int id) throws SQLException {
+    public boolean isProgramSlotAssigned(Date startDateTime, Date duration, int id) throws SQLException {
+        Calendar durationCalendar = Calendar.getInstance();
+        durationCalendar.setTime(duration);
+        durationCalendar.set(Calendar.DAY_OF_MONTH, 0);
+        durationCalendar.set(Calendar.MONTH, 0);
+        durationCalendar.set(Calendar.YEAR, 0);
+        
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat startDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        
         StringBuilder sqlQuery = new StringBuilder("select * from `program-slot`");
-        sqlQuery.append(" where (? between dateOfProgram and (dateOfProgram + duration))");
-        sqlQuery.append(" or (? between dateOfProgram and (dateOfProgram + duration))");
+        sqlQuery.append(" where (? between dateOfProgram and AddTime(dateOfProgram, duration))");
+        sqlQuery.append(" or (AddTime(?, ?) between dateOfProgram and AddTime(dateOfProgram, duration))");
+        
         
         if(id != 0)
             sqlQuery.append(" and id != ").append(id);
-        System.out.println(sqlQuery.toString());
         PreparedStatement prepareStatement;
         try {
+            String startDateStr = startDateFormat.format(startDateTime);
             prepareStatement = connection.prepareStatement(sqlQuery.toString());
-            prepareStatement.setDate(1, new java.sql.Date(startDateTime.getTime()));
-            prepareStatement.setDate(2, new java.sql.Date(endDateTime.getTime()));
-            
+            prepareStatement.setString(1, startDateStr);
+            prepareStatement.setString(2, startDateStr);
+            prepareStatement.setString(3, simpleDateFormat.format(duration));
+            if(id != 0)
+                prepareStatement.setInt(4, id);
             ResultSet rs = prepareStatement.executeQuery();
-            return rs.next();
+            boolean result = rs.next();
+            
+            return result;
         } catch (SQLException e) {
             throw e;
         }

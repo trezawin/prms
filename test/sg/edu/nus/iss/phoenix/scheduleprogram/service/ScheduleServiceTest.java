@@ -12,6 +12,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import sg.edu.nus.iss.phoenix.core.exceptions.DuplicateProgramSlot;
 import sg.edu.nus.iss.phoenix.scheduleprogram.entity.ProgramSlot;
 
 /**
@@ -41,91 +43,94 @@ public class ScheduleServiceTest {
     @After
     public void tearDown() {
     }
+    
+    private ProgramSlot initializeObject() throws Exception{
+        System.out.println("test create");
+        ProgramSlot rp = new ProgramSlot();
+        rp.setProgramName("noose");
+        rp.setDuration(new Date());
+        rp.setDateOfProgram(new Date());
+        rp.setPresenterId("dilbert");
+        rp.setProducerId("dilbert");
+        rp.setAssignedBy("pointyhead");
+        return rp;
+    }
 
     /**
      * Test of create method, of class ScheduleService.
      */
-    @org.junit.Test
+//    @org.junit.Test
     public void testCreate() throws Exception {
-        System.out.println("test create");
-        ProgramSlot rp = new ProgramSlot();
-        rp.setId(1001);
-        rp.setProgramName("TEST PROGRAM NAME3");
-        rp.setDuration(new Date());
-        rp.setDateOfProgram(new Date());
-        rp.setPresenterId("Presenter 1");
-        rp.setPresneterName("Presenter 1");
-        rp.setProducerId("Producer 1");
-        rp.setProducerName("Producer 1");
-              
-        instance.create(rp);
-        assertEquals("Producer 1", rp.getProducerName());
+        instance.create(initializeObject());
+        assertTrue(true);
     }
     
     /**
      * Test of retrieveAll method, of class ScheduleService.
      */
-    @org.junit.Test
+//    @org.junit.Test
     public void testRetrieveAll() throws Exception {
-        System.out.println("test retrieveAll");
-        
         ProgramSlot ps = null;
         ArrayList<ProgramSlot> result = instance.retrieveAll();
-        for (ProgramSlot programSlot : result) {
-            if(1000 == programSlot.getId()) {
-                ps = programSlot;
-            }
-        }
         
-        assertNotNull(ps);
-        assertEquals("TEST PROGRAM NAME", ps.getProgramName());
+        assertEquals(3, result.size());
     }
 
     /**
      * Test of retrieveBy method, of class ScheduleService.
      */
-    @org.junit.Test
+//    @org.junit.Test
     public void testRetrieveBy() throws Exception {
-        System.out.println("test retrieveBy");
-        int id = 1000;
+        int id = 16;
         ProgramSlot result = instance.retrieveBy(id);
         
         assertNotNull(result);
-        assertEquals(1000, result.getId());
+        assertEquals(16, result.getId());
     }
 
     /**
      * Test of update method, of class ScheduleService.
      */
-    @org.junit.Test
+//    @org.junit.Test
     public void testUpdate() throws Exception {
-        System.out.println("test update");
-        ProgramSlot rp = new ProgramSlot();
-        rp.setId(1000);
-        rp.setProgramName("TEST PROGRAM NAME 2");
-        rp.setDateOfProgram(new Date());
-        rp.setPresenterId("Presenter 2");
-        rp.setPresneterName("Presenter 2");
-        rp.setProducerId("Producer 2");
-        rp.setProducerName("Producer 2");
-        instance.update(rp);
+        instance.create(initializeObject());
         
-        assertNotNull(rp);
-        assertEquals("TEST PROGRAM NAME 2", rp.getProgramName());
-       
+        ArrayList<ProgramSlot> prs = instance.retrieveAll();
+        prs.get(prs.size() - 1).setDuration(new Date());
+        
+        instance.update(prs.get(prs.size() - 1));
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testCopy() throws Exception{
+        ArrayList<ProgramSlot> prs = instance.retrieveAll();
+        
+        ProgramSlot copyPS = prs.get(0);
+        copyPS.setId(0);
+        try {
+            instance.create(copyPS);
+            fail();
+        } catch (DuplicateProgramSlot e) {
+            assertTrue(true);
+        }
+        
     }
 
     /**
      * Test of delete method, of class ScheduleService.
      */
-    @org.junit.Test
+//    @org.junit.Test
     public void testDelete() throws Exception {
-        System.out.println("delete");
-        int id = 1000;
-        instance.delete(id);
+        instance.delete(24);
         
-        ProgramSlot result = instance.retrieveBy(id);
-        assertNull(result);
+        try {
+            ProgramSlot result = instance.retrieveBy(21);
+            Integer i = result.getId();
+            fail();
+        } catch (NullPointerException e) {
+            assertTrue(true);
+        }
     }
     
 }
