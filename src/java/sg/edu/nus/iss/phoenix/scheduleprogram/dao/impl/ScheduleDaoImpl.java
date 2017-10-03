@@ -86,14 +86,16 @@ public class ScheduleDaoImpl implements ScheduleDao {
     * @return      List of Program slot objects
     */
     @Override
-    public List<ProgramSlot> retrieveAll() throws SQLException {
-        String sql = "SELECT * FROM `program-slot`";
+    public List<ProgramSlot> retrieveAll(long startTimeStamp, long endTimeStamp) throws SQLException {
+        String sql = "SELECT * FROM `program-slot` where dateOfProgram between ? and ?";
         
         PreparedStatement stmt = null;
         
         List<ProgramSlot> prgSlotList = new ArrayList<>();
         try {
                 stmt = this.connection.prepareStatement(sql);
+                stmt.setDate(1, new java.sql.Date(startTimeStamp));
+                stmt.setDate(2, new java.sql.Date(endTimeStamp));
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
                     ProgramSlot programSlot = this.resultSetToObject(rs);

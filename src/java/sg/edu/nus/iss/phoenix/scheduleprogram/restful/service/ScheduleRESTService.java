@@ -45,11 +45,11 @@ public class ScheduleRESTService {
      * @return an instance of resource
      */
     @GET
-    @Path("/all")
+    @Path("/all/{startTimeStamp}/{endTimeStamp}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ProgramSlot> retrieveAll() throws Exception {
+    public List<ProgramSlot> retrieveAll(@PathParam("startTimeStamp") long startTimeStamp, @PathParam("endTimeStamp") long endTimeStamp) throws Exception {
         try {
-            return service.retrieveAll();
+            return service.retrieveAll(startTimeStamp, endTimeStamp);
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<ProgramSlot>();

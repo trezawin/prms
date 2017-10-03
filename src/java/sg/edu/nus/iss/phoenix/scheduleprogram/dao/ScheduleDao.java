@@ -44,7 +44,7 @@ public interface ScheduleDao {
          * @return 
          * @throws java.sql.SQLException
 	 */
-	public abstract List<ProgramSlot> retrieveAll() throws SQLException;
+	public abstract List<ProgramSlot> retrieveAll(long startTimeStamp, long endTimeStamp) throws SQLException;
 
 	/**
 	 * create-method. This will create new row in database according to supplied

@@ -40,8 +40,8 @@ public class ScheduleService {
         annualScheduleDao = factory.getAnnualScheduleDAO();
     }
 
-    public ArrayList<ProgramSlot> retrieveAll() throws Exception {
-        return (ArrayList<ProgramSlot>) rpdao.retrieveAll();
+    public ArrayList<ProgramSlot> retrieveAll(long startTimeStamp, long endTimeStamp) throws Exception {
+        return (ArrayList<ProgramSlot>) rpdao.retrieveAll(startTimeStamp, endTimeStamp);
     }
 
     public ProgramSlot retrieveBy(int id) {

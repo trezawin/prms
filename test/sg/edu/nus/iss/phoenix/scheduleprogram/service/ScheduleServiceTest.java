@@ -71,7 +71,7 @@ public class ScheduleServiceTest {
 //    @org.junit.Test
     public void testRetrieveAll() throws Exception {
         ProgramSlot ps = null;
-        ArrayList<ProgramSlot> result = instance.retrieveAll();
+        ArrayList<ProgramSlot> result = instance.retrieveAll(0, 0);
         
         assertEquals(3, result.size());
     }
@@ -95,7 +95,7 @@ public class ScheduleServiceTest {
     public void testUpdate() throws Exception {
         instance.create(initializeObject());
         
-        ArrayList<ProgramSlot> prs = instance.retrieveAll();
+        ArrayList<ProgramSlot> prs = instance.retrieveAll(0, 0);
         prs.get(prs.size() - 1).setDuration(new Date());
         
         instance.update(prs.get(prs.size() - 1));
@@ -104,7 +104,7 @@ public class ScheduleServiceTest {
     
     @Test
     public void testCopy() throws Exception{
-        ArrayList<ProgramSlot> prs = instance.retrieveAll();
+        ArrayList<ProgramSlot> prs = instance.retrieveAll(0, 0);
         
         ProgramSlot copyPS = prs.get(0);
         copyPS.setId(0);
