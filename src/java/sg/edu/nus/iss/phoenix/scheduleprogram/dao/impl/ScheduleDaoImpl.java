@@ -37,9 +37,14 @@ public class ScheduleDaoImpl implements ScheduleDao {
         connection = openConnection();
     }
 
+    /**
+    * Getting a program slot by it's Id
+    *
+    * @param  id  an Id of program slot
+    * @return      Program slot object
+    */
     @Override
     public ProgramSlot retrieveBy(int id) throws NotFoundException, SQLException {
-        
         String sql = "SELECT * FROM `program-slot` WHERE (id = ? ) ";
         PreparedStatement stmt = null;
         ProgramSlot prgSlot = new ProgramSlot();
@@ -57,6 +62,12 @@ public class ScheduleDaoImpl implements ScheduleDao {
         return prgSlot;
     }
 
+    /**
+    * Creating program slot object from ResultSet
+    *
+    * @param  rs  a ResultSet object
+    * @return      Program slot object
+    */
     private ProgramSlot resultSetToObject(ResultSet rs)throws SQLException{
         ProgramSlot programSlot = new ProgramSlot();
         
@@ -69,6 +80,11 @@ public class ScheduleDaoImpl implements ScheduleDao {
         return programSlot;
     }
     
+    /**
+    * Getting all program slots
+    *
+    * @return      List of Program slot objects
+    */
     @Override
     public List<ProgramSlot> retrieveAll() throws SQLException {
         String sql = "SELECT * FROM `program-slot`";
@@ -106,6 +122,11 @@ public class ScheduleDaoImpl implements ScheduleDao {
         return prgSlotList;
     }
 
+    /**
+    * Creating a new program slot in database
+    *
+    * @param  valueObject  an object of PrgramSlot type
+    */
     @Override
     public void create(ProgramSlot valueObject) throws SQLException {
         String sql = "";
@@ -133,6 +154,11 @@ public class ScheduleDaoImpl implements ScheduleDao {
         }
     }
 
+    /**
+    * Updating program slot in database
+    *
+    * @param  valueObject  an object of ProgramSlot type
+    */
     @Override
     public void update(ProgramSlot valueObject) throws NotFoundException, SQLException {
 
@@ -166,6 +192,11 @@ public class ScheduleDaoImpl implements ScheduleDao {
         }
     }
 
+    /**
+    * Deleting a program slot from database by it's Id
+    *
+    * @param  id  an Id of program slot
+    */
     @Override
     public void delete(ProgramSlot valueObject) throws NotFoundException, SQLException {
         
@@ -242,6 +273,13 @@ public class ScheduleDaoImpl implements ScheduleDao {
         return conn;
     }
 
+    /**
+    * Check the new ProgramSlot is overlapped on the exiting one in database.
+    *
+    * @param  startDateTime  program date of the ProgramSlot
+    * @param  duration  program duration of the ProgramSlot
+    * @return      
+    */
     @Override
     public boolean isProgramSlotAssigned(Date startDateTime, Date duration, int id) throws SQLException {
         Calendar durationCalendar = Calendar.getInstance();
