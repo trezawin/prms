@@ -94,8 +94,11 @@ public class ScheduleDaoImpl implements ScheduleDao {
         List<ProgramSlot> prgSlotList = new ArrayList<>();
         try {
                 stmt = this.connection.prepareStatement(sql);
-                stmt.setDate(1, new java.sql.Date(startTimeStamp));
-                stmt.setDate(2, new java.sql.Date(endTimeStamp));
+                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                
+                stmt.setString(1, dateFormat.format(new Date(startTimeStamp)));
+                stmt.setString(2, dateFormat.format(new Date(endTimeStamp)));
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
                     ProgramSlot programSlot = this.resultSetToObject(rs);
