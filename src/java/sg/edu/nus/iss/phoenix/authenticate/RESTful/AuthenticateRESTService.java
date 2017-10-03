@@ -17,6 +17,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.authenticate.service.AuthenticateService;
 
@@ -51,10 +52,18 @@ public class AuthenticateRESTService {
             @QueryParam("password") String pwd){
         AuthInfo response = new AuthInfo();
         response.setUsername(uname);
-        if(checkCredentials(uname, pwd)){
-                response.setAuthStatus(true);
+        User user = checkCredentials(uname, pwd);
+        if(user != null){
+            response.setAuthStatus(true);
+            String roles = "";
+            for (Role role : user.getRoles()) {
+                if(!roles.equals(""))
+                    roles += ",";
+                roles += role.getRole();
+            }
+            response.setRole(roles);
         }else{
-                response.setAuthStatus(false);	
+            response.setAuthStatus(false);	
         }
         return response;		
     }
@@ -66,19 +75,13 @@ public class AuthenticateRESTService {
      * @param pwd
      * @return
      */
-    private boolean checkCredentials(String uname, String pwd){
+    private User checkCredentials(String uname, String pwd){
         System.out.println("Inside checkCredentials");
         User user = new User();
         user.setId(uname);
         user.setPassword(pwd);  
         user = service.validateUserIdPassword(user);
-        if (null != user) {
-            System.out.println("Login Sucess!");
-                    return true;
-        } else {
-            System.out.println("Login Failed - Wrong username/password!");
-            return false;
-        }
+        return user;
     }
     
     /**
